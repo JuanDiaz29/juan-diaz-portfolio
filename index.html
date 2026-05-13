@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Alex Chen — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #070b14;
+    --bg-base: #0a0f1c;
+    --bg-surface: #111826;
+    --bg-elevated: #161f33;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-bright: rgba(255, 255, 255, 0.12);
+    --text-primary: #e8ecf4;
+    --text-secondary: #8b95ad;
+    --text-muted: #5a6478;
+    --accent-cyan: #00d4ff;
+    --accent-blue: #4d7eff;
+    --accent-violet: #8b5cf6;
+    --accent-mint: #5eead4;
+    --gradient-cool: linear-gradient(135deg, #00d4ff 0%, #4d7eff 50%, #8b5cf6 100%);
+    --gradient-soft: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    --gradient-text: linear-gradient(135deg, #5eead4 0%, #4d7eff 50%, #a78bfa 100%);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Ambient background gradient mesh */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 0%, rgba(77, 126, 255, 0.12), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 20%, rgba(0, 212, 255, 0.08), transparent 60%),
+      radial-gradient(ellipse 50% 30% at 50% 80%, rgba(139, 92, 246, 0.08), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Subtle noise texture overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: overlay;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* NAVIGATION */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 20px 0;
+    background: rgba(10, 15, 28, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition: color 0.3s ease;
+    cursor: pointer;
+  }
+
+  .nav-links a:hover { color: var(--text-primary); }
+
+  /* VIEW SYSTEM */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 80px;
+    position: relative;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1.4fr;
+    gap: 72px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .hero-content {
+    max-width: 720px;
+  }
+
+  .hero-image {
+    opacity: 0;
+    animation: fadeUp 0.9s 0.1s ease-out forwards;
+  }
+
+  .hero-image-frame {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    width: 100%;
+    max-width: 380px;
+    border-radius: 20px;
+    background:
+      radial-gradient(ellipse 80% 60% at 30% 20%, rgba(94, 234, 212, 0.12), transparent 70%),
+      radial-gradient(ellipse 70% 50% at 70% 80%, rgba(139, 92, 246, 0.12), transparent 70%),
+      linear-gradient(135deg, rgba(22, 31, 51, 0.6) 0%, rgba(17, 24, 38, 0.4) 100%);
+    border: 1px solid var(--border-bright);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-image-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(0, 212, 255, 0.05) 50%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-image-silhouette {
+    width: 55%;
+    height: auto;
+    opacity: 0.65;
+  }
+
+  .hero-image-label {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--text-muted);
+  }
+
+  .hero-image-corner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-color: var(--accent-cyan);
+    border-style: solid;
+    border-width: 0;
+    opacity: 0.7;
+  }
+
+  .hero-image-corner--tl { top: 12px; left: 12px; border-top-width: 1px; border-left-width: 1px; }
+  .hero-image-corner--tr { top: 12px; right: 12px; border-top-width: 1px; border-right-width: 1px; }
+  .hero-image-corner--bl { bottom: 12px; left: 12px; border-bottom-width: 1px; border-left-width: 1px; }
+  .hero-image-corner--br { bottom: 12px; right: 12px; border-bottom-width: 1px; border-right-width: 1px; }
+
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.25s ease-out forwards;
+  }
+
+  .hero h1 .accent {
+    font-style: italic;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding: 0.05em 0.22em 0.1em 0.02em;
+    margin: -0.05em -0.22em -0.1em -0.02em;
+    line-height: 1.15;
+  }
+
+  .hero p {
+    font-size: 20px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-width: 620px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s ease-out forwards;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.55s ease-out forwards;
+  }
+
+  .meta-item .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .meta-item .value {
+    font-size: 15px;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .socials {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s ease-out forwards;
+  }
+
+  .email-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 20px;
+    height: 44px;
+    border: 1px solid var(--border-bright);
+    border-radius: 22px;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    position: relative;
+    overflow: hidden;
+    margin-left: 8px;
+  }
+
+  .email-link .email-icon,
+  .email-link .email-text {
+    position: relative;
+    z-index: 1;
+  }
+
+  .email-link .email-icon {
+    display: inline-flex;
+    color: var(--accent-cyan);
+  }
+
+  .email-link .email-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .social-link {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border-bright);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .social-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-cool);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .social-link svg {
+    position: relative;
+    z-index: 1;
+    width: 18px;
+    height: 18px;
+  }
+
+  .social-link:hover {
+    color: white;
+    border-color: transparent;
+    transform: translateY(-2px);
+  }
+
+  .social-link:hover::before { opacity: 1; }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* SECTION HEADER */
+  .section {
+    padding: 120px 0;
+    position: relative;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 80px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 56px;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* PROJECTS */
+  .projects {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+  }
+
+  .project {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 60px;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(22, 31, 51, 0.4) 0%, rgba(17, 24, 38, 0.2) 100%);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-cool);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .project:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-4px);
+  }
+
+  .project:hover::before { opacity: 1; }
+
+  .project-visual {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    background: var(--bg-elevated);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .project-visual svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .project-title {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .project-abstract {
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  .article-links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .article-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0;
+    border-top: 1px solid var(--border);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .article-link:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .article-link-text {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .article-link-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .article-link-title {
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  .article-link-arrow {
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+  }
+
+  .article-link:hover .article-link-title {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .article-link:hover .article-link-arrow {
+    color: var(--accent-cyan);
+    transform: translateX(6px);
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 80px 0 40px;
+    border-top: 1px solid var(--border);
+    margin-top: 80px;
+  }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .footer-text {
+    color: var(--text-muted);
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ARTICLE VIEW */
+  .article-header {
+    padding-top: 140px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 60px;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 32px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .back-link:hover {
+    color: var(--accent-cyan);
+    transform: translateX(-4px);
+  }
+
+  .article-meta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .article-meta-divider {
+    width: 4px;
+    height: 4px;
+    background: var(--text-muted);
+    border-radius: 50%;
+  }
+
+  .article-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 24px;
+    max-width: 900px;
+  }
+
+  .article-subtitle {
+    font-size: 20px;
+    color: var(--text-secondary);
+    max-width: 720px;
+    line-height: 1.5;
+  }
+
+  .article-content {
+    max-width: 760px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+  }
+
+  .article-content h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin-top: 56px;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  .article-content h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 500;
+    margin-top: 40px;
+    margin-bottom: 16px;
+    color: var(--accent-mint);
+  }
+
+  .article-content p {
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  .article-content ul {
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    padding-left: 24px;
+    line-height: 1.8;
+  }
+
+  .article-content li { margin-bottom: 8px; }
+
+  .article-figure {
+    margin: 48px 0;
+    padding: 32px;
+    background: linear-gradient(135deg, rgba(22, 31, 51, 0.6) 0%, rgba(17, 24, 38, 0.3) 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+
+  .article-figure svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .figure-caption {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+  }
+
+  .figure-caption strong {
+    color: var(--accent-cyan);
+    font-weight: 500;
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .stat-card {
+    padding: 24px;
+    background: rgba(22, 31, 51, 0.4);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-align: left;
+  }
+
+  .stat-value {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 400;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ARTICLE NAV (between articles in same project) */
+  .article-nav {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .article-nav a {
+    flex: 1;
+    padding: 24px;
+    background: rgba(22, 31, 51, 0.4);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .article-nav a:hover {
+    border-color: var(--accent-cyan);
+    background: rgba(22, 31, 51, 0.6);
+  }
+
+  .article-nav .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .article-nav .title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+  }
+
+  .article-nav .next { text-align: right; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .container { padding: 0 20px; }
+    .project {
+      grid-template-columns: 1fr;
+      padding: 24px;
+      gap: 32px;
+    }
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .section-title { font-size: 40px; }
+    .nav-links { gap: 20px; }
+    .nav-links a:not(.active-link) { display: none; }
+    .stat-grid { grid-template-columns: 1fr; }
+    .article-nav { flex-direction: column; }
+    .article-nav .next { text-align: left; }
+    .email-link { margin-left: 0; }
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero-image-frame { max-width: 260px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <div class="logo">Alex Chen</div>
+    <ul class="nav-links">
+      <li><a onclick="showView('home'); scrollToId('work')">Projects</a></li>
+      <li><a onclick="showView('home'); scrollToId('about')">About</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== HOME VIEW ===================== -->
+<div id="view-home" class="view active">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-image" aria-label="Photo placeholder">
+        <div class="hero-image-frame">
+          <svg class="hero-image-silhouette" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="silhouette-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#5eead4" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.35"/>
+              </linearGradient>
+            </defs>
+            <circle cx="100" cy="85" r="38" fill="url(#silhouette-grad)"/>
+            <path d="M 30 220 Q 30 145 100 145 Q 170 145 170 220 Z" fill="url(#silhouette-grad)"/>
+          </svg>
+          <div class="hero-image-label">YOUR PHOTO HERE</div>
+          <div class="hero-image-corner hero-image-corner--tl"></div>
+          <div class="hero-image-corner hero-image-corner--tr"></div>
+          <div class="hero-image-corner hero-image-corner--bl"></div>
+          <div class="hero-image-corner hero-image-corner--br"></div>
+        </div>
+      </div>
+      <div class="hero-content">
+        <h1>Designer &amp; engineer<br />building <span class="accent">thoughtful</span> systems.</h1>
+      <p>I'm a hardware-meets-software generalist working at the intersection of electronics, embedded systems, and industrial design. Each project below is documented in depth — from initial sketches to final results.</p>
+
+      <div class="hero-meta">
+        <div class="meta-item">
+          <div class="label">Based in</div>
+          <div class="value">Fullerton, CA</div>
+        </div>
+        <div class="meta-item">
+          <div class="label">Focus</div>
+          <div class="value">Hardware · Embedded · Design</div>
+        </div>
+        <div class="meta-item">
+          <div class="label">Available</div>
+          <div class="value">Summer 2026</div>
+        </div>
+      </div>
+
+      <div class="socials">
+        <a href="#" class="social-link" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        </a>
+        <a href="#" class="social-link" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        </a>
+        <a href="#" class="social-link" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <span class="email-link">
+          <span class="email-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </span>
+          <span class="email-text">hello@alexchen.io</span>
+        </span>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="work">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Projects</h2>
+      </div>
+
+      <div class="projects">
+
+        <!-- PROJECT 1 -->
+        <article class="project">
+          <div class="project-visual">
+            <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="p1grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.3"/>
+                </linearGradient>
+              </defs>
+              <rect width="400" height="300" fill="url(#p1grad)"/>
+              <g stroke="#5eead4" stroke-width="1.5" fill="none" opacity="0.8">
+                <rect x="120" y="100" width="160" height="100" rx="4"/>
+                <circle cx="150" cy="130" r="6"/>
+                <circle cx="200" cy="130" r="6"/>
+                <circle cx="250" cy="130" r="6"/>
+                <rect x="140" y="160" width="120" height="20" rx="2"/>
+                <line x1="80" y1="150" x2="120" y2="150"/>
+                <line x1="280" y1="150" x2="320" y2="150"/>
+                <line x1="200" y1="80" x2="200" y2="100"/>
+                <line x1="200" y1="200" x2="200" y2="220"/>
+                <circle cx="80" cy="150" r="4" fill="#5eead4"/>
+                <circle cx="320" cy="150" r="4" fill="#5eead4"/>
+                <circle cx="200" cy="80" r="4" fill="#5eead4"/>
+                <circle cx="200" cy="220" r="4" fill="#5eead4"/>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <h3 class="project-title">Modular Sensor Array</h3>
+            <p class="project-abstract">A reconfigurable environmental monitoring platform with hot-swappable sensor modules, designed for field research in remote locations. The system uses a custom backplane protocol allowing modules to be added or removed without recompilation.</p>
+
+            <div class="article-links">
+              <a class="article-link" onclick="showView('article-1-design')">
+                <span class="article-link-text">
+                  <span class="article-link-num">01</span>
+                  <span class="article-link-title">High-Level Design</span>
+                </span>
+                <span class="article-link-arrow">→</span>
+              </a>
+              <a class="article-link" onclick="showView('article-1-schematics')">
+                <span class="article-link-text">
+                  <span class="article-link-num">02</span>
+                  <span class="article-link-title">Schematics &amp; PCB</span>
+                </span>
+                <span class="article-link-arrow">→</span>
+              </a>
+              <a class="article-link" onclick="showView('article-1-results')">
+                <span class="article-link-text">
+                  <span class="article-link-num">03</span>
+                  <span class="article-link-title">Testing &amp; Results</span>
+                </span>
+                <span class="article-link-arrow">→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- PROJECT 2 -->
+        <article class="project">
+          <div class="project-visual">
+            <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="p2grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#4d7eff" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#5eead4" stop-opacity="0.3"/>
+                </linearGradient>
+              </defs>
+              <rect width="400" height="300" fill="url(#p2grad)"/>
+              <g stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.9">
+                <path d="M50,250 Q100,80 200,150 T350,100" stroke-width="2"/>
+                <path d="M50,250 Q120,180 200,200 T350,160" stroke-dasharray="4,4"/>
+                <line x1="50" y1="250" x2="350" y2="250"/>
+                <line x1="50" y1="50" x2="50" y2="250"/>
+                <g fill="#5eead4">
+                  <circle cx="100" cy="180" r="3"/>
+                  <circle cx="170" cy="135" r="3"/>
+                  <circle cx="240" cy="155" r="3"/>
+                  <circle cx="310" cy="115" r="3"/>
+                </g>
+                <text x="200" y="40" fill="#5eead4" font-family="JetBrains Mono" font-size="10" text-anchor="middle" opacity="0.6">PERFORMANCE OVER TIME</text>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <h3 class="project-title">Adaptive Quadrotor Controller</h3>
+            <p class="project-abstract">A real-time control system for autonomous drones that adapts to payload changes and wind disturbances mid-flight. Uses a model-predictive controller running on an STM32H7 with onboard sensor fusion.</p>
+
+            <div class="article-links">
+              <a class="article-link" onclick="showView('article-2-design')">
+                <span class="article-link-text">
+                  <span class="article-link-num">01</span>
+                  <span class="article-link-title">System Architecture</span>
+                </span>
+                <span class="article-link-arrow">→</span>
+              </a>
+              <a class="article-link" onclick="showView('article-2-schematics')">
+                <span class="article-link-text">
+                  <span class="article-link-num">02</span>
+                  <span class="article-link-title">Control Diagrams</span>
+                </span>
+                <span class="article-link-arrow">→</span>
+              </a>
+              <a class="article-link" onclick="showView('article-2-results')">
+                <span class="article-link-text">
+                  <span class="article-link-num">03</span>
+                  <span class="article-link-title">Flight Test Results</span>
+                </span>
+                <span class="article-link-arrow">→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- PROJECT 3 -->
+        <article class="project">
+          <div class="project-visual">
+            <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="p3grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#00d4ff" stop-opacity="0.3"/>
+                </linearGradient>
+              </defs>
+              <rect width="400" height="300" fill="url(#p3grad)"/>
+              <g stroke="#a78bfa" stroke-width="1.5" fill="none" opacity="0.9">
+                <circle cx="200" cy="150" r="60"/>
+                <circle cx="200" cy="150" r="40" stroke-dasharray="3,3"/>
+                <circle cx="200" cy="150" r="20"/>
+                <line x1="200" y1="50" x2="200" y2="90"/>
+                <line x1="200" y1="210" x2="200" y2="250"/>
+                <line x1="100" y1="150" x2="140" y2="150"/>
+                <line x1="260" y1="150" x2="300" y2="150"/>
+                <g fill="#a78bfa">
+                  <rect x="195" y="50" width="10" height="10"/>
+                  <rect x="195" y="240" width="10" height="10"/>
+                  <rect x="90" y="145" width="10" height="10"/>
+                  <rect x="300" y="145" width="10" height="10"/>
+                </g>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <h3 class="project-title">Tactile Haptic Interface</h3>
+            <p class="project-abstract">A wearable haptic device for navigation feedback in low-visibility environments. Uses an array of micro-actuators driven by spatial audio cues to render directional information on the skin.</p>
+
+            <div class="article-links">
+              <a class="article-link" onclick="showView('article-3-design')">
+                <span class="article-link-text">
+                  <span class="article-link-num">01</span>
+                  <span class="article-link-title">Design Concept</span>
+                </span>
+                <span class="article-link-arrow">→</span>
+              </a>
+              <a class="article-link" onclick="showView('article-3-schematics')">
+                <span class="article-link-text">
+                  <span class="article-link-num">02</span>
+                  <span class="article-link-title">Mechanical Drawings</span>
+                </span>
+                <span class="article-link-arrow">→</span>
+              </a>
+              <a class="article-link" onclick="showView('article-3-results')">
+                <span class="article-link-text">
+                  <span class="article-link-num">03</span>
+                  <span class="article-link-title">User Study Results</span>
+                </span>
+                <span class="article-link-arrow">→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about" style="padding-top: 40px;">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">About</h2>
+      </div>
+      <div style="max-width: 720px;">
+        <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 24px;">I studied electrical engineering and human-centered design, and I've spent the last few years building things that sit at the awkward, interesting boundary between the two. My work tends to start with a physical problem and end up as a small, careful system of hardware and software.</p>
+        <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.8;">Outside of work I'm usually rebuilding bicycles, reading more philosophy than is strictly useful, or trying to make decent espresso.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-text">© 2026 ALEX CHEN — DESIGNED &amp; BUILT WITH CARE</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ===================== ARTICLE: PROJECT 1 — HIGH LEVEL DESIGN ===================== -->
+<div id="view-article-1-design" class="view">
+  <section class="container">
+    <header class="article-header">
+      <a class="back-link" onclick="showView('home'); scrollToId('work')">← Back to projects</a>
+      <div class="article-meta">
+        <span>Modular Sensor Array</span>
+        <span class="article-meta-divider"></span>
+        <span>Article 01 / 03</span>
+        <span class="article-meta-divider"></span>
+        <span>12 min read</span>
+      </div>
+      <h1 class="article-title">High-Level Design</h1>
+      <p class="article-subtitle">The architectural decisions behind a hot-swappable sensor platform built for harsh, remote field deployments.</p>
+    </header>
+
+    <div class="article-content">
+      <p>The Modular Sensor Array began with a frustration shared across the environmental research lab I was embedded in: every field deployment required a custom hardware build, and adding a new measurement type meant a new PCB spin and a new firmware compile. The whole pipeline was bottlenecked on hardware engineering for what were, fundamentally, configuration changes.</p>
+
+      <p>This article walks through the system-level decisions that shaped the platform — what we kept, what we threw out, and where the boundaries between modules ultimately landed.</p>
+
+      <h2>Three constraints, ranked</h2>
+      <p>Early on we settled on a strict priority order for design decisions. Whenever two requirements conflicted, the higher one won — no exceptions.</p>
+      <ul>
+        <li><strong>Field reliability.</strong> A failed deployment can mean months of lost data and a multi-thousand-dollar helicopter trip.</li>
+        <li><strong>Configurability without recompilation.</strong> Field scientists should be able to swap sensors without touching code.</li>
+        <li><strong>Power efficiency.</strong> Most deployments run on a single 100Wh battery for six months.</li>
+      </ul>
+
+      <div class="article-figure">
+        <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bg-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#0a0f1c"/>
+              <stop offset="100%" stop-color="#111826"/>
+            </linearGradient>
+          </defs>
+          <rect width="700" height="320" fill="url(#bg-grad-1)" rx="8"/>
+          <g stroke="#5eead4" stroke-width="1.5" fill="none">
+            <!-- Backplane -->
+            <rect x="50" y="220" width="600" height="50" rx="4" stroke="#4d7eff"/>
+            <text x="350" y="252" fill="#4d7eff" font-family="JetBrains Mono" font-size="11" text-anchor="middle">BACKPLANE BUS — I²C / SPI / POWER</text>
+
+            <!-- MCU -->
+            <rect x="280" y="40" width="140" height="80" rx="4" stroke="#00d4ff"/>
+            <text x="350" y="70" fill="#00d4ff" font-family="JetBrains Mono" font-size="12" text-anchor="middle">CONTROLLER</text>
+            <text x="350" y="88" fill="#8b95ad" font-family="JetBrains Mono" font-size="10" text-anchor="middle">STM32L4 + LoRa</text>
+            <text x="350" y="104" fill="#8b95ad" font-family="JetBrains Mono" font-size="10" text-anchor="middle">SD storage</text>
+            <line x1="350" y1="120" x2="350" y2="220"/>
+
+            <!-- Modules -->
+            <rect x="80" y="140" width="100" height="60" rx="4"/>
+            <text x="130" y="165" fill="#e8ecf4" font-family="JetBrains Mono" font-size="10" text-anchor="middle">MOD 01</text>
+            <text x="130" y="180" fill="#8b95ad" font-family="JetBrains Mono" font-size="9" text-anchor="middle">temperature</text>
+            <line x1="130" y1="200" x2="130" y2="220"/>
+
+            <rect x="200" y="140" width="100" height="60" rx="4"/>
+            <text x="250" y="165" fill="#e8ecf4" font-family="JetBrains Mono" font-size="10" text-anchor="middle">MOD 02</text>
+            <text x="250" y="180" fill="#8b95ad" font-family="JetBrains Mono" font-size="9" text-anchor="middle">humidity</text>
+            <line x1="250" y1="200" x2="250" y2="220"/>
+
+            <rect x="400" y="140" width="100" height="60" rx="4"/>
+            <text x="450" y="165" fill="#e8ecf4" font-family="JetBrains Mono" font-size="10" text-anchor="middle">MOD 03</text>
+            <text x="450" y="180" fill="#8b95ad" font-family="JetBrains Mono" font-size="9" text-anchor="middle">soil moisture</text>
+            <line x1="450" y1="200" x2="450" y2="220"/>
+
+            <rect x="520" y="140" width="100" height="60" rx="4"/>
+            <text x="570" y="165" fill="#e8ecf4" font-family="JetBrains Mono" font-size="10" text-anchor="middle">MOD 04</text>
+            <text x="570" y="180" fill="#8b95ad" font-family="JetBrains Mono" font-size="9" text-anchor="middle">light + UV</text>
+            <line x1="570" y1="200" x2="570" y2="220"/>
+          </g>
+        </svg>
+        <div class="figure-caption"><strong>FIG 1.</strong> System block diagram. A central STM32L4 controller communicates over a shared backplane bus with up to eight sensor modules. Each module is independently powered and self-describing via an EEPROM identifier.</div>
+      </div>
+
+      <h2>The self-describing module pattern</h2>
+      <p>The key insight that unlocked configurability was borrowing from Eurorack and USB: every module carries a small EEPROM that describes itself — sensor type, address, sample rate, calibration coefficients. On boot, the controller walks the bus, reads the EEPROMs, and constructs its scheduling table at runtime.</p>
+      <p>This meant firmware shipped <em>once</em>, and configuration happened by physically swapping modules. A research team in the field could literally pull out a humidity sensor and plug in a soil pH sensor, and the system would just work.</p>
+
+      <h3>Tradeoffs we accepted</h3>
+      <p>The EEPROM-per-module approach added cost (about $0.40 per module) and required a more disciplined bus protocol. We also gave up the ability to do certain compile-time optimizations. In exchange we got a system where the human in the loop — the field scientist — never had to touch a compiler. That was the right trade for this audience.</p>
+
+      <div class="article-nav">
+        <a onclick="showView('home'); scrollToId('work')">
+          <div class="label">← All projects</div>
+          <div class="title">Projects</div>
+        </a>
+        <a class="next" onclick="showView('article-1-schematics')">
+          <div class="label">Next article →</div>
+          <div class="title">Schematics &amp; PCB</div>
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== ARTICLE: PROJECT 1 — SCHEMATICS ===================== -->
+<div id="view-article-1-schematics" class="view">
+  <section class="container">
+    <header class="article-header">
+      <a class="back-link" onclick="showView('home'); scrollToId('work')">← Back to projects</a>
+      <div class="article-meta">
+        <span>Modular Sensor Array</span>
+        <span class="article-meta-divider"></span>
+        <span>Article 02 / 03</span>
+        <span class="article-meta-divider"></span>
+        <span>8 min read</span>
+      </div>
+      <h1 class="article-title">Schematics &amp; PCB</h1>
+      <p class="article-subtitle">Circuit-level decisions: power isolation, bus arbitration, and the small details that made the backplane reliable in cold environments.</p>
+    </header>
+
+    <div class="article-content">
+      <p>The backplane PCB went through four revisions before it stopped failing in the cold-chamber tests. This article documents the final schematic and the specific changes that got us there.</p>
+
+      <h2>Power architecture</h2>
+      <p>Each module receives both 3.3V and 5V rails, with a dedicated soft-start circuit per slot. Early revisions used a shared rail and saw cascading brownouts when high-current modules (the soil moisture probe in particular) were hot-swapped. Per-slot isolation solved this at the cost of a few extra components per slot.</p>
+
+      <div class="article-figure">
+        <svg viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg">
+          <rect width="700" height="360" fill="#0a0f1c" rx="8"/>
+          <g stroke="#5eead4" stroke-width="1.2" fill="none" font-family="JetBrains Mono" font-size="10">
+            <!-- Input -->
+            <text x="60" y="40" fill="#00d4ff">VIN (7-24V)</text>
+            <line x1="60" y1="60" x2="60" y2="180"/>
+            <circle cx="60" cy="60" r="3" fill="#00d4ff"/>
+
+            <!-- Buck 1 -->
+            <rect x="120" y="60" width="100" height="50" rx="2"/>
+            <text x="170" y="85" fill="#e8ecf4" text-anchor="middle">BUCK 5V</text>
+            <text x="170" y="100" fill="#8b95ad" font-size="9" text-anchor="middle">TPS62933</text>
+            <line x1="60" y1="85" x2="120" y2="85"/>
+            <line x1="220" y1="85" x2="280" y2="85"/>
+            <text x="250" y="78" fill="#5eead4" font-size="9" text-anchor="middle">5V</text>
+
+            <!-- Buck 2 -->
+            <rect x="120" y="140" width="100" height="50" rx="2"/>
+            <text x="170" y="165" fill="#e8ecf4" text-anchor="middle">BUCK 3.3V</text>
+            <text x="170" y="180" fill="#8b95ad" font-size="9" text-anchor="middle">TPS62933</text>
+            <line x1="60" y1="165" x2="120" y2="165"/>
+            <line x1="220" y1="165" x2="280" y2="165"/>
+            <text x="250" y="158" fill="#5eead4" font-size="9" text-anchor="middle">3.3V</text>
+
+            <!-- Soft-start slots -->
+            <g>
+              <rect x="300" y="40" width="80" height="40" rx="2"/>
+              <text x="340" y="58" fill="#e8ecf4" text-anchor="middle">SS_01</text>
+              <text x="340" y="72" fill="#8b95ad" font-size="9" text-anchor="middle">LM73100</text>
+
+              <rect x="400" y="40" width="80" height="40" rx="2"/>
+              <text x="440" y="58" fill="#e8ecf4" text-anchor="middle">SS_02</text>
+              <text x="440" y="72" fill="#8b95ad" font-size="9" text-anchor="middle">LM73100</text>
+
+              <rect x="500" y="40" width="80" height="40" rx="2"/>
+              <text x="540" y="58" fill="#e8ecf4" text-anchor="middle">SS_03</text>
+              <text x="540" y="72" fill="#8b95ad" font-size="9" text-anchor="middle">LM73100</text>
+
+              <rect x="600" y="40" width="80" height="40" rx="2"/>
+              <text x="640" y="58" fill="#e8ecf4" text-anchor="middle">SS_04</text>
+              <text x="640" y="72" fill="#8b95ad" font-size="9" text-anchor="middle">LM73100</text>
+            </g>
+
+            <line x1="280" y1="60" x2="300" y2="60"/>
+            <line x1="380" y1="60" x2="400" y2="60"/>
+            <line x1="480" y1="60" x2="500" y2="60"/>
+            <line x1="580" y1="60" x2="600" y2="60"/>
+
+            <!-- Bus -->
+            <rect x="120" y="240" width="560" height="60" rx="4" stroke="#4d7eff"/>
+            <text x="400" y="265" fill="#4d7eff" text-anchor="middle">BACKPLANE: I²C @ 400kHz · SPI @ 8MHz · INT lines · 5V · 3.3V · GND</text>
+            <text x="400" y="285" fill="#8b95ad" text-anchor="middle" font-size="9">10-pin Molex Pico-EZmate, locking</text>
+
+            <text x="340" y="335" fill="#a78bfa" text-anchor="middle" font-size="9">SLOT 1</text>
+            <text x="440" y="335" fill="#a78bfa" text-anchor="middle" font-size="9">SLOT 2</text>
+            <text x="540" y="335" fill="#a78bfa" text-anchor="middle" font-size="9">SLOT 3</text>
+            <text x="640" y="335" fill="#a78bfa" text-anchor="middle" font-size="9">SLOT 4</text>
+
+            <line x1="340" y1="80" x2="340" y2="240"/>
+            <line x1="440" y1="80" x2="440" y2="240"/>
+            <line x1="540" y1="80" x2="540" y2="240"/>
+            <line x1="640" y1="80" x2="640" y2="240"/>
+          </g>
+        </svg>
+        <div class="figure-caption"><strong>FIG 2.</strong> Simplified power and bus topology. Per-slot soft-start ICs (LM73100) prevent inrush from one module browning out the rest of the system on hot-swap.</div>
+      </div>
+
+      <h2>Bus arbitration</h2>
+      <p>The shared I²C bus uses a simple polling scheme — the controller is always master, and modules respond on their preconfigured address read from EEPROM. We considered moving to CAN for the obvious robustness benefits but the part count and current draw didn't justify it for sub-1Hz sample rates.</p>
+
+      <h3>Components that mattered most</h3>
+      <ul>
+        <li><strong>LM73100 ideal diode + soft start</strong> — the single most important part change between rev 2 and rev 3</li>
+        <li><strong>TCA9548A I²C multiplexer</strong> — let us handle address collisions between identical modules in different slots</li>
+        <li><strong>TVS diodes on every bus line</strong> — added after a lightning-adjacent deployment fried a controller</li>
+      </ul>
+
+      <div class="article-nav">
+        <a onclick="showView('article-1-design')">
+          <div class="label">← Previous</div>
+          <div class="title">High-Level Design</div>
+        </a>
+        <a class="next" onclick="showView('article-1-results')">
+          <div class="label">Next article →</div>
+          <div class="title">Testing &amp; Results</div>
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== ARTICLE: PROJECT 1 — RESULTS ===================== -->
+<div id="view-article-1-results" class="view">
+  <section class="container">
+    <header class="article-header">
+      <a class="back-link" onclick="showView('home'); scrollToId('work')">← Back to projects</a>
+      <div class="article-meta">
+        <span>Modular Sensor Array</span>
+        <span class="article-meta-divider"></span>
+        <span>Article 03 / 03</span>
+        <span class="article-meta-divider"></span>
+        <span>6 min read</span>
+      </div>
+      <h1 class="article-title">Testing &amp; Results</h1>
+      <p class="article-subtitle">Six months of field deployment data, cold-chamber stress testing, and what we learned about what actually breaks in the wild.</p>
+    </header>
+
+    <div class="article-content">
+      <p>The array was deployed at three sites across the Sierra Nevada from May through October. This article summarizes what we measured, what failed, and what the data eventually told us about the design.</p>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-value">99.4%</div>
+          <div class="stat-label">Uptime</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">182</div>
+          <div class="stat-label">Days deployed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">2.1M</div>
+          <div class="stat-label">Samples recorded</div>
+        </div>
+      </div>
+
+      <h2>Field performance</h2>
+      <p>Across the three sites we hit 99.4% uptime over the full deployment period. The lost time was concentrated in two events: a single SD card failure at the highest-altitude site (since replaced with a higher-endurance industrial SKU) and a four-day stretch where snow blocked the solar panel before the battery could fully recover.</p>
+
+      <div class="article-figure">
+        <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
+          <rect width="700" height="280" fill="#0a0f1c" rx="8"/>
+          <g font-family="JetBrains Mono" font-size="10" fill="#8b95ad">
+            <!-- Axes -->
+            <line x1="60" y1="40" x2="60" y2="230" stroke="#5a6478" stroke-width="1"/>
+            <line x1="60" y1="230" x2="660" y2="230" stroke="#5a6478" stroke-width="1"/>
+
+            <!-- Y labels -->
+            <text x="50" y="50" text-anchor="end">100%</text>
+            <text x="50" y="135" text-anchor="end">50%</text>
+            <text x="50" y="230" text-anchor="end">0%</text>
+
+            <!-- X labels -->
+            <text x="100" y="250">MAY</text>
+            <text x="200" y="250">JUN</text>
+            <text x="300" y="250">JUL</text>
+            <text x="400" y="250">AUG</text>
+            <text x="500" y="250">SEP</text>
+            <text x="600" y="250">OCT</text>
+
+            <!-- Reference line -->
+            <line x1="60" y1="55" x2="660" y2="55" stroke="#5eead4" stroke-width="1" stroke-dasharray="3,4" opacity="0.4"/>
+            <text x="670" y="58" fill="#5eead4" opacity="0.6">99%</text>
+
+            <!-- Data line -->
+            <polyline points="80,52 130,50 180,53 230,51 280,50 330,52 380,55 430,82 480,75 530,52 580,50 630,50"
+                      fill="none" stroke="#00d4ff" stroke-width="2"/>
+
+            <!-- Data dots -->
+            <g fill="#5eead4">
+              <circle cx="80" cy="52" r="3"/>
+              <circle cx="130" cy="50" r="3"/>
+              <circle cx="180" cy="53" r="3"/>
+              <circle cx="230" cy="51" r="3"/>
+              <circle cx="280" cy="50" r="3"/>
+              <circle cx="330" cy="52" r="3"/>
+              <circle cx="380" cy="55" r="3"/>
+              <circle cx="430" cy="82" r="4" fill="#a78bfa"/>
+              <circle cx="480" cy="75" r="4" fill="#a78bfa"/>
+              <circle cx="530" cy="52" r="3"/>
+              <circle cx="580" cy="50" r="3"/>
+              <circle cx="630" cy="50" r="3"/>
+            </g>
+
+            <text x="455" y="100" fill="#a78bfa">snow event</text>
+
+            <text x="350" y="25" fill="#e8ecf4" text-anchor="middle" font-size="11">DAILY UPTIME — SITE 02, ELEVATION 2,840m</text>
+          </g>
+        </svg>
+        <div class="figure-caption"><strong>FIG 3.</strong> Daily uptime over the deployment window at site 02. Two highlighted dips correspond to a snow-blocked solar panel and slow battery recovery.</div>
+      </div>
+
+      <h2>Cold-chamber findings</h2>
+      <p>Before deployment we ran the units through a 72-hour soak at -25°C. Two failure modes emerged that drove rev-4 changes:</p>
+      <ul>
+        <li>Electrolytic capacitors on the controller board lost capacitance enough to cause occasional brownouts on radio transmit. We replaced them with polymer types rated for -40°C.</li>
+        <li>The SD card's write latency rose unpredictably below -15°C. We added a small heater resistor under the card socket, gated by a thermistor.</li>
+      </ul>
+
+      <h2>What I'd do differently</h2>
+      <p>Looking back, the biggest mistake was underestimating how much of the project would be packaging, cabling, and enclosure design. Roughly 40% of the rev-3-to-rev-4 changes were mechanical, not electrical. If I started this project again I'd bring in an ME on day one.</p>
+
+      <div class="article-nav">
+        <a onclick="showView('article-1-schematics')">
+          <div class="label">← Previous</div>
+          <div class="title">Schematics &amp; PCB</div>
+        </a>
+        <a class="next" onclick="showView('home'); scrollToId('work')">
+          <div class="label">Back to →</div>
+          <div class="title">All Projects</div>
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== PROJECT 2 ARTICLES (CONDENSED) ===================== -->
+<div id="view-article-2-design" class="view">
+  <section class="container">
+    <header class="article-header">
+      <a class="back-link" onclick="showView('home'); scrollToId('work')">← Back to projects</a>
+      <div class="article-meta">
+        <span>Adaptive Quadrotor Controller</span>
+        <span class="article-meta-divider"></span>
+        <span>Article 01 / 03</span>
+      </div>
+      <h1 class="article-title">System Architecture</h1>
+      <p class="article-subtitle">An overview of the control stack, from sensor fusion to motor mixing.</p>
+    </header>
+    <div class="article-content">
+      <p>Replace this with your project's high-level design article. Cover the goals, the overall architecture, and the major design tradeoffs you made along the way.</p>
+      <p>This template is structured so each project has three companion articles. Use this slot for the conceptual narrative — the "why" behind the system.</p>
+      <div class="article-nav">
+        <a onclick="showView('home'); scrollToId('work')"><div class="label">← All projects</div><div class="title">Projects</div></a>
+        <a class="next" onclick="showView('article-2-schematics')"><div class="label">Next →</div><div class="title">Control Diagrams</div></a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="view-article-2-schematics" class="view">
+  <section class="container">
+    <header class="article-header">
+      <a class="back-link" onclick="showView('home'); scrollToId('work')">← Back to projects</a>
+      <div class="article-meta">
+        <span>Adaptive Quadrotor Controller</span>
+        <span class="article-meta-divider"></span>
+        <span>Article 02 / 03</span>
+      </div>
+      <h1 class="article-title">Control Diagrams</h1>
+      <p class="article-subtitle">The control loops, signal flow, and feedback paths.</p>
+    </header>
+    <div class="article-content">
+      <p>Insert your control diagrams, block diagrams, or schematics here. Each figure can use the same article-figure pattern shown in Project 01's articles.</p>
+      <div class="article-nav">
+        <a onclick="showView('article-2-design')"><div class="label">← Previous</div><div class="title">System Architecture</div></a>
+        <a class="next" onclick="showView('article-2-results')"><div class="label">Next →</div><div class="title">Flight Test Results</div></a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="view-article-2-results" class="view">
+  <section class="container">
+    <header class="article-header">
+      <a class="back-link" onclick="showView('home'); scrollToId('work')">← Back to projects</a>
+      <div class="article-meta">
+        <span>Adaptive Quadrotor Controller</span>
+        <span class="article-meta-divider"></span>
+        <span>Article 03 / 03</span>
+      </div>
+      <h1 class="article-title">Flight Test Results</h1>
+      <p class="article-subtitle">Performance under disturbance, hover stability, and trajectory tracking.</p>
+    </header>
+    <div class="article-content">
+      <p>Use this section for plots, numerical results, and what they mean. The stat-grid component from Project 01 works well for headline numbers.</p>
+      <div class="article-nav">
+        <a onclick="showView('article-2-schematics')"><div class="label">← Previous</div><div class="title">Control Diagrams</div></a>
+        <a class="next" onclick="showView('home'); scrollToId('work')"><div class="label">Back to →</div><div class="title">All Projects</div></a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== PROJECT 3 ARTICLES (CONDENSED) ===================== -->
+<div id="view-article-3-design" class="view">
+  <section class="container">
+    <header class="article-header">
+      <a class="back-link" onclick="showView('home'); scrollToId('work')">← Back to projects</a>
+      <div class="article-meta">
+        <span>Tactile Haptic Interface</span>
+        <span class="article-meta-divider"></span>
+        <span>Article 01 / 03</span>
+      </div>
+      <h1 class="article-title">Design Concept</h1>
+      <p class="article-subtitle">From sketches to a wearable form factor.</p>
+    </header>
+    <div class="article-content">
+      <p>Use this slot to describe the design language, references, and human-factors thinking behind the artifact.</p>
+      <div class="article-nav">
+        <a onclick="showView('home'); scrollToId('work')"><div class="label">← All projects</div><div class="title">Projects</div></a>
+        <a class="next" onclick="showView('article-3-schematics')"><div class="label">Next →</div><div class="title">Mechanical Drawings</div></a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="view-article-3-schematics" class="view">
+  <section class="container">
+    <header class="article-header">
+      <a class="back-link" onclick="showView('home'); scrollToId('work')">← Back to projects</a>
+      <div class="article-meta">
+        <span>Tactile Haptic Interface</span>
+        <span class="article-meta-divider"></span>
+        <span>Article 02 / 03</span>
+      </div>
+      <h1 class="article-title">Mechanical Drawings</h1>
+      <p class="article-subtitle">CAD breakdown, exploded views, and tolerances.</p>
+    </header>
+    <div class="article-content">
+      <p>Drop in your CAD exports, exploded diagrams, and the rationale behind dimensional choices.</p>
+      <div class="article-nav">
+        <a onclick="showView('article-3-design')"><div class="label">← Previous</div><div class="title">Design Concept</div></a>
+        <a class="next" onclick="showView('article-3-results')"><div class="label">Next →</div><div class="title">User Study Results</div></a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="view-article-3-results" class="view">
+  <section class="container">
+    <header class="article-header">
+      <a class="back-link" onclick="showView('home'); scrollToId('work')">← Back to projects</a>
+      <div class="article-meta">
+        <span>Tactile Haptic Interface</span>
+        <span class="article-meta-divider"></span>
+        <span>Article 03 / 03</span>
+      </div>
+      <h1 class="article-title">User Study Results</h1>
+      <p class="article-subtitle">What participants got right, what they got wrong, and what we learned about haptic perception.</p>
+    </header>
+    <div class="article-content">
+      <p>Summarize the methodology, sample size, key findings, and the limitations of your study.</p>
+      <div class="article-nav">
+        <a onclick="showView('article-3-schematics')"><div class="label">← Previous</div><div class="title">Mechanical Drawings</div></a>
+        <a class="next" onclick="showView('home'); scrollToId('work')"><div class="label">Back to →</div><div class="title">All Projects</div></a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  function showView(viewName) {
+    const target = document.getElementById('view-' + viewName);
+    if (!target) return;
+    const wasAlreadyActive = target.classList.contains('active');
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    target.classList.add('active');
+    if (!wasAlreadyActive) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }
+
+  function scrollToId(id) {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }
+</script>
+
+</body>
+</html>
